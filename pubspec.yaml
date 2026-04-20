@@ -1,0 +1,35 @@
+name: golden_hour
+description: Golden Hour emergency response system for highway accidents in India.
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  supabase_flutter: ^2.8.3
+  flutter_riverpod: ^2.6.1
+  geolocator: ^13.0.2
+  permission_handler: ^11.3.1
+  sensors_plus: ^6.1.1
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  url_launcher: ^6.3.1
+  web_socket_channel: ^3.0.1
+  http: ^1.2.2
+  image_picker: ^1.1.2
+  tflite_flutter: ^0.11.0
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/models/

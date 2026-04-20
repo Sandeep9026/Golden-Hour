@@ -1,0 +1,30 @@
+# Flutter / Dart
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub/
+.pub-cache/
+build/
+
+# Android / IDE
+android/.gradle/
+android/local.properties
+*.iml
+.idea/
+.vscode/
+
+# macOS / Linux / Windows generated
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+linux/flutter/ephemeral/
+macos/Flutter/ephemeral/
+windows/flutter/ephemeral/
+
+# Secrets / local overrides
+*.env
+*.keystore
+key.properties
+
+# Misc
+coverage/
