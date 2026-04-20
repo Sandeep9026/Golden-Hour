@@ -24,14 +24,6 @@ final _supabaseConfigured =
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  if (_supabaseConfigured) {
-    await Supabase.initialize(
-      url: _supabaseUrl,
-      anonKey: _supabaseAnonKey,
-    );
-  }
-
   runApp(const ProviderScope(child: GoldenHourApp()));
 }
 
@@ -65,7 +57,106 @@ class GoldenHourApp extends StatelessWidget {
       title: 'Golden Hour',
       debugShowCheckedModeBanner: false,
       theme: theme,
-      home: const SessionGate(),
+      home: const AppBootstrapScreen(),
+    );
+  }
+}
+
+class AppBootstrapScreen extends StatefulWidget {
+  const AppBootstrapScreen({super.key});
+
+  @override
+  State<AppBootstrapScreen> createState() => _AppBootstrapScreenState();
+}
+
+class _AppBootstrapScreenState extends State<AppBootstrapScreen> {
+  static bool _supabaseInitialized = false;
+  late Future<void> _bootstrapFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _bootstrapFuture = _initializeApp();
+  }
+
+  Future<void> _initializeApp() async {
+    if (!_supabaseConfigured) {
+      return;
+    }
+
+    if (_supabaseInitialized) {
+      return;
+    }
+
+    await Supabase.initialize(
+      url: _supabaseUrl,
+      anonKey: _supabaseAnonKey,
+    );
+    _supabaseInitialized = true;
+  }
+
+  void _retryBootstrap() {
+    setState(() {
+      _bootstrapFuture = _initializeApp();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<void>(
+      future: _bootstrapFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Scaffold(
+            body: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 520),
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Startup Error',
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'The app failed to start. Please verify the Supabase configuration and try again.',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          const SizedBox(height: 12),
+                          SelectableText(
+                            '${snapshot.error}',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          const SizedBox(height: 20),
+                          FilledButton(
+                            onPressed: _retryBootstrap,
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+
+        return const SessionGate();
+      },
     );
   }
 }

@@ -28,3 +28,7 @@ key.properties
 
 # Misc
 coverage/
+
+# Firebase local cache
+.firebase/
+firebase-debug.log
